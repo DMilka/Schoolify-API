@@ -12,7 +12,7 @@ use ApiPlatform\Core\Annotation\ApiFilter;
 
 /**
  * @ApiResource(
- *     normalizationContext={"groups"={"module"}}
+ *     
  * )
  * @ApiFilter(SearchFilter::class, properties={"teacher_id": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\ModuleRepository")
@@ -79,7 +79,6 @@ class Module
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups("module")
      * 
      */
     private $class_name;

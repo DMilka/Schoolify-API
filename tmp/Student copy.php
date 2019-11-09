@@ -21,38 +21,38 @@ class Student
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"module", "student"})
+     * @Groups("module", "student")
      * 
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"module", "student"})
+     * @Groups("module", "student")
      */
     private $name;
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"module", "student"})
+     * @Groups("module", "student")
      */
     private $Surname;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Module", inversedBy="students")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"module", "student"})
+     * @Groups("module", "student")
      */
     private $module_id;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Mark", mappedBy="markform_id")
-     * @Groups({"module", "student"})
+     * @Groups("module", "student")
      */
     private $marks;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Attendance", mappedBy="student_id")
-     * @Groups({"module", "student"})
+     * @Groups("module", "student")
      */
     private $attendances;
 

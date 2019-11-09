@@ -16,19 +16,19 @@ class Mark
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"module", "student"})
+     * @Groups("student")
      */
     private $id;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"module", "student"})
+     * @Groups("student")
      */
     private $value;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"module", "student"})
+     * @Groups("student")
      */
     private $old_value;
 

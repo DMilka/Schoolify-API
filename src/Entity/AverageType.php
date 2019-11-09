@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -15,16 +16,19 @@ class AverageType
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *  @Groups("module")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
+     *  @Groups("module")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=64)
+     *  @Groups("module")
      */
     private $type;
 

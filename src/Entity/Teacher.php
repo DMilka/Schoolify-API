@@ -4,24 +4,31 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Security\Core\User\UserInterface;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use Symfony\Component\Serializer\Annotation\Groups;
 /**
- * @ApiResource()
+ * @ApiResource(
+ *      normalizationContext={"groups"={"teacher"}}
+ * )
+ * @ApiFilter(SearchFilter::class, properties={"username": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\TeacherRepository")
  */
-class Teacher
+class Teacher implements UserInterface
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups("teacher")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $login;
+    private $username;
 
     /**
      * @ORM\Column(type="string", length=64)
@@ -30,11 +37,19 @@ class Teacher
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Groups("teacher")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=64)
+     * @Groups("teacher")
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="string", length=64)
+     * @Groups("teacher")
      */
     private $surname;
 
@@ -48,14 +63,14 @@ class Teacher
         return $this->id;
     }
 
-    public function getLogin(): ?string
+    public function getUsername(): ?string
     {
-        return $this->login;
+        return $this->username;
     }
 
-    public function setLogin(string $login): self
+    public function setUsername(string $username): self
     {
-        $this->login = $login;
+        $this->username = $username;
 
         return $this;
     }
@@ -109,6 +124,43 @@ class Teacher
         if ($module->getTeacherId() !== $this) {
             $module->setTeacherId($this);
         }
+
+        return $this;
+    }
+
+
+    public function getSalt()
+    {
+        // you *may* need a real salt depending on your encoder
+        // see section on salt below
+        return null;
+    }
+
+    public function getRoles()
+    {
+        return ['role'];
+    }
+
+    public function eraseCredentials()
+    {
+    }
+
+    /**
+     * Get the value of email
+     */ 
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set the value of email
+     *
+     * @return  self
+     */ 
+    public function setEmail($email)
+    {
+        $this->email = $email;
 
         return $this;
     }

@@ -15,13 +15,13 @@ class Attendance
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"module", "student"})
+     * @Groups("student")
      */
     private $id;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Groups({"module", "student"})
+     * @Groups("student")
      */
     private $value;
 

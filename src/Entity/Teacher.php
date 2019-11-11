@@ -54,7 +54,7 @@ class Teacher implements UserInterface
     private $surname;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Module", mappedBy="teacher_id", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Module", mappedBy="teacherId", cascade={"persist", "remove"})
      */
     private $module;
 

@@ -39,7 +39,7 @@ class Mark
     private $student;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\MarkForm", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\MarkForm",  inversedBy="marks_forms")
      * @ORM\JoinColumn(nullable=false)
      * @Groups("student")
      */

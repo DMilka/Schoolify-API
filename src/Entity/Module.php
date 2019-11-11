@@ -11,8 +11,9 @@ use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiFilter;
 
 /**
- * @ApiResource(
- *     normalizationContext={"groups"={"module"}}
+ * @ApiResource(attributes={
+ *     "normalization_context"={"groups"={"module"}}
+ * })
  * )
  * @ApiFilter(SearchFilter::class, properties={"teacher_id": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\ModuleRepository")
@@ -34,20 +35,6 @@ class Module
     private $name;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Teacher", inversedBy="module", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups("module")
-     */
-    private $teacher_id;
-
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\AverageType", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups("module")
-     */
-    private $average_type_id;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Student", mappedBy="module_id")
      * @Groups("module")
      */
@@ -66,23 +53,36 @@ class Module
     private $attendanceForms;
 
     /**
-     * @ORM\Column(type="date")
+     * @ORM\OneToOne(targetEntity="App\Entity\AverageType", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("module")
      */
-    private $start_date;
+    private $averageTypeId;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Teacher",  inversedBy="teachers")
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("module")
      */
-    private $end_date;
+    private $teacherId;
+
+    /**
+     * @ORM\Column(type="datetime")
+     * @Groups("module")
+     */
+    private $startDate;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @Groups("module")
+     */
+    private $endDate;
 
     /**
      * @ORM\Column(type="string", length=64)
      * @Groups("module")
-     * 
      */
-    private $class_name;
+    private $className;
 
     public function __construct()
     {
@@ -108,29 +108,7 @@ class Module
         return $this;
     }
 
-    public function getTeacherId(): ?Teacher
-    {
-        return $this->teacher_id;
-    }
 
-    public function setTeacherId(Teacher $teacher_id): self
-    {
-        $this->teacher_id = $teacher_id;
-
-        return $this;
-    }
-
-    public function getAverageTypeId(): ?AverageType
-    {
-        return $this->average_type_id;
-    }
-
-    public function setAverageTypeId(AverageType $average_type_id): self
-    {
-        $this->average_type_id = $average_type_id;
-
-        return $this;
-    }
 
     /**
      * @return Collection|Student[]
@@ -225,39 +203,65 @@ class Module
         return $this;
     }
 
-    public function getStartDate(): ?\DateTimeInterface
+    public function getAverageTypeId(): ?AverageType
     {
-        return $this->start_date;
+        return $this->averageTypeId;
     }
 
-    public function setStartDate(\DateTimeInterface $start_date): self
+    public function setAverageTypeId(AverageType $averageTypeId): self
     {
-        $this->start_date = $start_date;
+        $this->averageTypeId = $averageTypeId;
+
+        return $this;
+    }
+
+    public function getTeacherId(): ?Teacher
+    {
+        return $this->teacherId;
+    }
+
+    public function setTeacherId(Teacher $teacherId): self
+    {
+        $this->teacherId = $teacherId;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
 
         return $this;
     }
 
     public function getEndDate(): ?\DateTimeInterface
     {
-        return $this->end_date;
+        return $this->endDate;
     }
 
-    public function setEndDate(?\DateTimeInterface $end_date): self
+    public function setEndDate(?\DateTimeInterface $endDate): self
     {
-        $this->end_date = $end_date;
+        $this->endDate = $endDate;
 
         return $this;
     }
 
     public function getClassName(): ?string
     {
-        return $this->class_name;
+        return $this->className;
     }
 
-    public function setClassName(string $class_name): self
+    public function setClassName(string $className): self
     {
-        $this->class_name = $class_name;
+        $this->className = $className;
 
         return $this;
     }
+
+
 }

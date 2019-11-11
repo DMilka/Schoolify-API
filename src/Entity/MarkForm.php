@@ -32,6 +32,12 @@ class MarkForm
      */
     private $module_id;
 
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     * @Groups("module")
+     */
+    private $avgValue;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -57,6 +63,18 @@ class MarkForm
     public function setModuleId(?Module $module_id): self
     {
         $this->module_id = $module_id;
+
+        return $this;
+    }
+
+    public function getAvgValue(): ?float
+    {
+        return $this->avgValue;
+    }
+
+    public function setAvgValue(?float $avgValue): self
+    {
+        $this->avgValue = $avgValue;
 
         return $this;
     }

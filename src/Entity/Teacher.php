@@ -3,16 +3,13 @@
 namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
-use ApiPlatform\Core\Annotation\ApiFilter;
-use Symfony\Component\Serializer\Annotation\Groups;
+
 /**
- * @ApiResource(
- *      normalizationContext={"groups"={"teacher"}}
- * )
- * @ApiFilter(SearchFilter::class, properties={"username": "exact"})
+ * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\TeacherRepository")
  */
 class Teacher implements UserInterface
@@ -21,9 +18,18 @@ class Teacher implements UserInterface
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups("teacher")
      */
     private $id;
+
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    private $name;
+
+    /**
+     * @ORM\Column(type="string", length=64)
+     */
+    private $surname;
 
     /**
      * @ORM\Column(type="string", length=64)
@@ -33,58 +39,26 @@ class Teacher implements UserInterface
     /**
      * @ORM\Column(type="string", length=64)
      */
-    private $password;
-
-    /**
-     * @ORM\Column(type="string", length=64)
-     * @Groups("teacher")
-     */
-    private $name;
-
-    /**
-     * @ORM\Column(type="string", length=64)
-     * @Groups("teacher")
-     */
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=64)
-     * @Groups("teacher")
+     * @ORM\Column(type="string", length=255)
      */
-    private $surname;
+    private $password;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Module", mappedBy="teacherId", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Module", mappedBy="teacherId")
      */
-    private $module;
+    private $modules;
+
+    public function __construct()
+    {
+        $this->modules = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
-
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -111,57 +85,77 @@ class Teacher implements UserInterface
         return $this;
     }
 
-    public function getModule(): ?Module
+    public function getUsername(): ?string
     {
-        return $this->module;
+        return $this->username;
     }
 
-    public function setModule(Module $module): self
+    public function setUsername(string $username): self
     {
-        $this->module = $module;
+        $this->username = $username;
 
-        // set the owning side of the relation if necessary
-        if ($module->getTeacherId() !== $this) {
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Module[]
+     */
+    public function getModules(): Collection
+    {
+        return $this->modules;
+    }
+
+    public function addModule(Module $module): self
+    {
+        if (!$this->modules->contains($module)) {
+            $this->modules[] = $module;
             $module->setTeacherId($this);
         }
 
         return $this;
     }
 
-
-    public function getSalt()
+    public function removeModule(Module $module): self
     {
-        // you *may* need a real salt depending on your encoder
-        // see section on salt below
-        return null;
-    }
-
-    public function getRoles()
-    {
-        return ['role'];
-    }
-
-    public function eraseCredentials()
-    {
-    }
-
-    /**
-     * Get the value of email
-     */ 
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set the value of email
-     *
-     * @return  self
-     */ 
-    public function setEmail($email)
-    {
-        $this->email = $email;
+        if ($this->modules->contains($module)) {
+            $this->modules->removeElement($module);
+            // set the owning side to null (unless already changed)
+            if ($module->getTeacherId() === $this) {
+                $module->setTeacherId(null);
+            }
+        }
 
         return $this;
     }
+
+    public function getRoles(){
+       return ['teacher'];
+    }
+    public function eraseCredentials() {}
+
+    public function getSalt() {}
 }

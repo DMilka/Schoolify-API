@@ -31,11 +31,12 @@ class AttendanceForm
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Module", inversedBy="attendanceForms")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups("module")
      */
-    private $module_id;
+    private $moduleId;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Attendance", mappedBy="attendance_form_id")
+     * @ORM\OneToMany(targetEntity="App\Entity\Attendance", mappedBy="attendanceFormId")
      */
     private $attendances;
 
@@ -63,12 +64,12 @@ class AttendanceForm
 
     public function getModuleId(): ?Module
     {
-        return $this->module_id;
+        return $this->moduleId;
     }
 
-    public function setModuleId(?Module $module_id): self
+    public function setModuleId(?Module $moduleId): self
     {
-        $this->module_id = $module_id;
+        $this->moduleId = $moduleId;
 
         return $this;
     }

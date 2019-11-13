@@ -7,16 +7,16 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
- * @ApiResource(attributes={
- *     "normalization_context"={"groups"={"module"}}
- * })
+ * @ApiResource(
+ *      normalizationContext={"groups"={"module"}, "enable_max_depth"=true  },
  * )
- * @ApiFilter(SearchFilter::class, properties={"teacher_id": "exact"})
  * @ORM\Entity(repositoryClass="App\Repository\ModuleRepository")
+ * @ApiFilter(SearchFilter::class, properties={"teacherId": "exact"})
  */
 class Module
 {
@@ -35,59 +35,60 @@ class Module
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Student", mappedBy="module_id")
+     * @ORM\Column(type="string", length=64)
      * @Groups("module")
      */
-    private $students;
+    private $className;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\MarkForm", mappedBy="module_id")
+     * @ORM\Column(type="date")
      * @Groups("module")
      */
-    private $markForms;
+    private $startDate;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\AttendanceForm", mappedBy="module_id")
+     * @ORM\Column(type="date", nullable=true)
      * @Groups("module")
      */
-    private $attendanceForms;
+    private $endDate;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\AverageType", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups("module")
-     */
-    private $averageTypeId;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Teacher",  inversedBy="teachers")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Teacher", inversedBy="modules")
      * @ORM\JoinColumn(nullable=false)
      * @Groups("module")
      */
     private $teacherId;
 
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\OneToOne(targetEntity="App\Entity\AverageType", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
      * @Groups("module")
+     * @MaxDepth(2)
      */
-    private $startDate;
+    private $AverageTypeId;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\OneToOne(targetEntity="App\Entity\MarkForm", mappedBy="moduleId", cascade={"persist", "remove"})
      * @Groups("module")
+     * @MaxDepth(2)
      */
-    private $endDate;
+    private $markForm;
 
     /**
-     * @ORM\Column(type="string", length=64)
-     * @Groups("module")
+     * @ORM\OneToMany(targetEntity="App\Entity\Student", mappedBy="moduleId")
      */
-    private $className;
+    private $students;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\AttendanceForm", mappedBy="moduleId")
+     * @Groups("module")
+     * @MaxDepth(2)
+     */
+    private $attendanceForms;
 
     public function __construct()
     {
         $this->students = new ArrayCollection();
-        $this->markForms = new ArrayCollection();
         $this->attendanceForms = new ArrayCollection();
     }
 
@@ -108,7 +109,82 @@ class Module
         return $this;
     }
 
+    public function getClassName(): ?string
+    {
+        return $this->className;
+    }
 
+    public function setClassName(string $className): self
+    {
+        $this->className = $className;
+
+        return $this;
+    }
+
+    public function getStartDate(): ?\DateTimeInterface
+    {
+        return $this->startDate;
+    }
+
+    public function setStartDate(\DateTimeInterface $startDate): self
+    {
+        $this->startDate = $startDate;
+
+        return $this;
+    }
+
+    public function getEndDate(): ?\DateTimeInterface
+    {
+        return $this->endDate;
+    }
+
+    public function setEndDate(?\DateTimeInterface $endDate): self
+    {
+        $this->endDate = $endDate;
+
+        return $this;
+    }
+
+    public function getTeacherId(): ?Teacher
+    {
+        return $this->teacherId;
+    }
+
+    public function setTeacherId(?Teacher $teacherId): self
+    {
+        $this->teacherId = $teacherId;
+
+        return $this;
+    }
+
+    public function getAverageTypeId(): ?AverageType
+    {
+        return $this->AverageTypeId;
+    }
+
+    public function setAverageTypeId(AverageType $AverageTypeId): self
+    {
+        $this->AverageTypeId = $AverageTypeId;
+
+        return $this;
+    }
+
+    public function getMarkForm(): ?MarkForm
+    {
+        return $this->markForm;
+    }
+
+    public function setMarkForm(MarkForm $markForm): self
+    {
+        $this->markForm = $markForm;
+
+        // set the owning side of the relation if necessary
+        if ($markForm->getModuleId() !== $this) {
+            $markForm->setModuleId($this);
+        }
+
+        return $this;
+    }
 
     /**
      * @return Collection|Student[]
@@ -135,37 +211,6 @@ class Module
             // set the owning side to null (unless already changed)
             if ($student->getModuleId() === $this) {
                 $student->setModuleId(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|MarkForm[]
-     */
-    public function getMarkForms(): Collection
-    {
-        return $this->markForms;
-    }
-
-    public function addMarkForm(MarkForm $markForm): self
-    {
-        if (!$this->markForms->contains($markForm)) {
-            $this->markForms[] = $markForm;
-            $markForm->setModuleId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMarkForm(MarkForm $markForm): self
-    {
-        if ($this->markForms->contains($markForm)) {
-            $this->markForms->removeElement($markForm);
-            // set the owning side to null (unless already changed)
-            if ($markForm->getModuleId() === $this) {
-                $markForm->setModuleId(null);
             }
         }
 
@@ -202,66 +247,4 @@ class Module
 
         return $this;
     }
-
-    public function getAverageTypeId(): ?AverageType
-    {
-        return $this->averageTypeId;
-    }
-
-    public function setAverageTypeId(AverageType $averageTypeId): self
-    {
-        $this->averageTypeId = $averageTypeId;
-
-        return $this;
-    }
-
-    public function getTeacherId(): ?Teacher
-    {
-        return $this->teacherId;
-    }
-
-    public function setTeacherId(Teacher $teacherId): self
-    {
-        $this->teacherId = $teacherId;
-
-        return $this;
-    }
-
-    public function getStartDate(): ?\DateTimeInterface
-    {
-        return $this->startDate;
-    }
-
-    public function setStartDate(\DateTimeInterface $startDate): self
-    {
-        $this->startDate = $startDate;
-
-        return $this;
-    }
-
-    public function getEndDate(): ?\DateTimeInterface
-    {
-        return $this->endDate;
-    }
-
-    public function setEndDate(?\DateTimeInterface $endDate): self
-    {
-        $this->endDate = $endDate;
-
-        return $this;
-    }
-
-    public function getClassName(): ?string
-    {
-        return $this->className;
-    }
-
-    public function setClassName(string $className): self
-    {
-        $this->className = $className;
-
-        return $this;
-    }
-
-
 }

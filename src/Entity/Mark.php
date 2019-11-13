@@ -16,34 +16,35 @@ class Mark
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"module", "student"})
+     * @Groups("student")
      */
     private $id;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"module", "student"})
+     * @Groups("student")
      */
     private $value;
 
     /**
      * @ORM\Column(type="float", nullable=true)
-     * @Groups({"module", "student"})
+     * @Groups("student")
      */
-    private $old_value;
+    private $oldValue;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\MarkForm")
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups("student")
+     */
+    private $markformId;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Student", inversedBy="marks")
      * @ORM\JoinColumn(nullable=false)
-     */
-    private $student;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\MarkForm",  inversedBy="marks_forms")
-     * @ORM\JoinColumn(nullable=false)
      * @Groups("student")
      */
-    private $markform_id;
+    private $studentId;
 
     public function getId(): ?int
     {
@@ -64,36 +65,36 @@ class Mark
 
     public function getOldValue(): ?float
     {
-        return $this->old_value;
+        return $this->oldValue;
     }
 
-    public function setOldValue(?float $old_value): self
+    public function setOldValue(?float $oldValue): self
     {
-        $this->old_value = $old_value;
-
-        return $this;
-    }
-
-    public function getStudentId(): ?Student
-    {
-        return $this->student;
-    }
-
-    public function setStudentId(?Student $student): self
-    {
-        $this->student = $student;
+        $this->oldValue = $oldValue;
 
         return $this;
     }
 
     public function getMarkformId(): ?MarkForm
     {
-        return $this->markform_id;
+        return $this->markformId;
     }
 
-    public function setMarkformId(MarkForm $markform_id): self
+    public function setMarkformId(?MarkForm $markformId): self
     {
-        $this->markform_id = $markform_id;
+        $this->markformId = $markformId;
+
+        return $this;
+    }
+
+    public function getStudentId(): ?Student
+    {
+        return $this->studentId;
+    }
+
+    public function setStudentId(?Student $studentId): self
+    {
+        $this->studentId = $studentId;
 
         return $this;
     }

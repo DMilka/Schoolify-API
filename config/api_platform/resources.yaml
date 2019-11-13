@@ -1,6 +1,0 @@
-App\Entity\Module:
-    attributes:
-        normalization_context:
-            groups: ['module']
-        denormalization_context:
-            groups: ['write']

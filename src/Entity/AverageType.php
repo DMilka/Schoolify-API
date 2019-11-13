@@ -16,19 +16,19 @@ class AverageType
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     *  @Groups("module")
+     * @Groups("module")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
-     *  @Groups("module")
+     * @Groups("module")
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=64)
-     *  @Groups("module")
+     * @Groups("module")
      */
     private $type;
 

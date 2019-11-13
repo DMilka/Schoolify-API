@@ -7,11 +7,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
+
 
 
 /**
  * @ApiResource(
- *  normalizationContext={"groups"={"student"}}
+ *      normalizationContext={"groups"={"student"}, "enable_max_depth"=true},
  * )
  * @ORM\Entity(repositoryClass="App\Repository\StudentRepository")
  */
@@ -21,38 +23,40 @@ class Student
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"module", "student"})
-     * 
+     * @Groups("student")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"module", "student"})
+     *  @Groups("student")
      */
     private $name;
+
     /**
      * @ORM\Column(type="string", length=64)
-     * @Groups({"module", "student"})
+     *  @Groups("student")
      */
-    private $Surname;
+    private $surname;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Module", inversedBy="students")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"module", "student"})
+     *  @Groups("student")
      */
-    private $module_id;
+    private $moduleId;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Mark", mappedBy="markform_id")
-     * @Groups({"module", "student"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Mark", mappedBy="studentId")
+     *  @Groups("student")
+     * @MaxDepth(2)
      */
     private $marks;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Attendance", mappedBy="student_id")
-     * @Groups({"module", "student"})
+     * @ORM\OneToMany(targetEntity="App\Entity\Attendance", mappedBy="studentId")
+     *  @Groups("student")
+     * @MaxDepth(2)
      */
     private $attendances;
 
@@ -81,24 +85,24 @@ class Student
 
     public function getSurname(): ?string
     {
-        return $this->Surname;
+        return $this->surname;
     }
 
-    public function setSurname(string $Surname): self
+    public function setSurname(string $surname): self
     {
-        $this->Surname = $Surname;
+        $this->surname = $surname;
 
         return $this;
     }
 
     public function getModuleId(): ?Module
     {
-        return $this->module_id;
+        return $this->moduleId;
     }
 
-    public function setModuleId(?Module $module_id): self
+    public function setModuleId(?Module $moduleId): self
     {
-        $this->module_id = $module_id;
+        $this->moduleId = $moduleId;
 
         return $this;
     }
@@ -115,7 +119,7 @@ class Student
     {
         if (!$this->marks->contains($mark)) {
             $this->marks[] = $mark;
-            $mark->setMarkformId($this);
+            $mark->setStudentId($this);
         }
 
         return $this;
@@ -126,8 +130,8 @@ class Student
         if ($this->marks->contains($mark)) {
             $this->marks->removeElement($mark);
             // set the owning side to null (unless already changed)
-            if ($mark->getMarkformId() === $this) {
-                $mark->setMarkformId(null);
+            if ($mark->getStudentId() === $this) {
+                $mark->setStudentId(null);
             }
         }
 

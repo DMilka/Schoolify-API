@@ -6,9 +6,11 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
+
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\MarkFormRepository")
+ * 
  */
 class MarkForm
 {
@@ -27,16 +29,17 @@ class MarkForm
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Module", inversedBy="markForms")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $module_id;
-
-    /**
      * @ORM\Column(type="float", nullable=true)
      * @Groups("module")
      */
     private $avgValue;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Module", inversedBy="markForm", cascade={"persist", "remove"})
+     * @ORM\JoinColumn(nullable=false)
+     * @Groups("module")
+     */
+    private $moduleId;
 
     public function getId(): ?int
     {
@@ -55,18 +58,6 @@ class MarkForm
         return $this;
     }
 
-    public function getModuleId(): ?Module
-    {
-        return $this->module_id;
-    }
-
-    public function setModuleId(?Module $module_id): self
-    {
-        $this->module_id = $module_id;
-
-        return $this;
-    }
-
     public function getAvgValue(): ?float
     {
         return $this->avgValue;
@@ -75,6 +66,18 @@ class MarkForm
     public function setAvgValue(?float $avgValue): self
     {
         $this->avgValue = $avgValue;
+
+        return $this;
+    }
+
+    public function getModuleId(): ?Module
+    {
+        return $this->moduleId;
+    }
+
+    public function setModuleId(Module $moduleId): self
+    {
+        $this->moduleId = $moduleId;
 
         return $this;
     }

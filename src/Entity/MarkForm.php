@@ -5,11 +5,14 @@ namespace App\Entity;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 
 /**
  * @ApiResource()
  * @ORM\Entity(repositoryClass="App\Repository\MarkFormRepository")
+ * @ApiFilter(SearchFilter::class, properties={"moduleId": "exact"})
  * 
  */
 class MarkForm
@@ -35,7 +38,7 @@ class MarkForm
     private $avgValue;
 
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Module", inversedBy="markForm", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Module", inversedBy="markForm", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      * @Groups("module")
      */

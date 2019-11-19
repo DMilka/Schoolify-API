@@ -32,6 +32,8 @@ class AverageType
      */
     private $type;
 
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -60,4 +62,6 @@ class AverageType
 
         return $this;
     }
+
+
 }

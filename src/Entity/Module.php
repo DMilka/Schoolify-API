@@ -59,13 +59,7 @@ class Module
      */
     private $teacherId;
 
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\AverageType", cascade={"persist", "remove"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups("module")
-     * @MaxDepth(2)
-     */
-    private $AverageTypeId;
+
 
     /**
      * @ORM\OneToOne(targetEntity="App\Entity\MarkForm", mappedBy="moduleId", cascade={"persist", "remove"})
@@ -85,6 +79,13 @@ class Module
      * @MaxDepth(2)
      */
     private $attendanceForms;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\AverageType")
+     * @ORM\JoinColumn(nullable=false)
+     *  @Groups("module")
+     */
+    private $averageTypeId;
 
     public function __construct()
     {
@@ -157,17 +158,7 @@ class Module
         return $this;
     }
 
-    public function getAverageTypeId(): ?AverageType
-    {
-        return $this->AverageTypeId;
-    }
 
-    public function setAverageTypeId(AverageType $AverageTypeId): self
-    {
-        $this->AverageTypeId = $AverageTypeId;
-
-        return $this;
-    }
 
     public function getMarkForm(): ?MarkForm
     {
@@ -244,6 +235,18 @@ class Module
                 $attendanceForm->setModuleId(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAverageTypeId(): ?AverageType
+    {
+        return $this->averageTypeId;
+    }
+
+    public function setAverageTypeId(?AverageType $averageTypeId): self
+    {
+        $this->averageTypeId = $averageTypeId;
 
         return $this;
     }

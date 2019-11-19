@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Serializer\Annotation\MaxDepth;
+use ApiPlatform\Core\Annotation\ApiFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 
 
@@ -16,6 +18,7 @@ use Symfony\Component\Serializer\Annotation\MaxDepth;
  *      normalizationContext={"groups"={"student"}, "enable_max_depth"=true},
  * )
  * @ORM\Entity(repositoryClass="App\Repository\StudentRepository")
+ * @ApiFilter(SearchFilter::class, properties={"moduleId": "exact"})
  */
 class Student
 {
